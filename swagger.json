@@ -1,0 +1,573 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "accounting",
+        "version": "1.0",
+        "description": "Accounting service is a microservice that is in charge of all financial information – company account balances, transactions, statements, Money push (debit) and pull (credit) is handed over to the payment integrators.",
+        "summary": "Accounting service",
+        "contact": {
+            "name": "Alain MUCYO",
+            "email": "alainmucyo3@gmail.com",
+            "url": "https://alainmucyo.netlify.app/"
+        }
+    },
+    "servers": [
+        {
+            "url": "http://localhost:3000",
+            "description": "localhost"
+        }
+    ],
+    "paths": {
+        "/api/v1/transactions/{refId}": {
+            "parameters": [
+                {
+                    "schema": {
+                        "type": "string"
+                    },
+                    "name": "refId",
+                    "in": "path",
+                    "required": true
+                }
+            ],
+            "get": {
+                "summary": "Check transaction status",
+                "tags": [],
+                "responses": {
+                    "200": {
+                        "description": "Transaction found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "description": "",
+                                    "type": "object",
+                                    "properties": {
+                                        "created_at": {
+                                            "type": "string",
+                                            "minLength": 1
+                                        },
+                                        "company_id": {
+                                            "type": "string",
+                                            "minLength": 1
+                                        },
+                                        "transaction_type": {
+                                            "type": "string",
+                                            "minLength": 1
+                                        },
+                                        "amount": {
+                                            "type": "number"
+                                        },
+                                        "msisdn": {
+                                            "type": "string",
+                                            "minLength": 1
+                                        },
+                                        "channel_id": {
+                                            "type": "string",
+                                            "minLength": 1
+                                        },
+                                        "transaction_reference": {
+                                            "type": "string",
+                                            "minLength": 1
+                                        },
+                                        "gateway_reference": {
+                                            "type": "string",
+                                            "minLength": 1
+                                        },
+                                        "gateway_status": {
+                                            "type": "string",
+                                            "minLength": 1
+                                        },
+                                        "gateway_status_code": {
+                                            "type": "string",
+                                            "minLength": 1
+                                        }
+                                    },
+                                    "required": [
+                                        "created_at",
+                                        "company_id",
+                                        "transaction_type",
+                                        "amount",
+                                        "msisdn",
+                                        "channel_id",
+                                        "transaction_reference",
+                                        "gateway_reference",
+                                        "gateway_status",
+                                        "gateway_status_code"
+                                    ],
+                                    "x-examples": {
+                                        "example-1": {
+                                            "created_at": "2021-04-21 14:24:51",
+                                            "company_id": "8a004ce7-fd39-41b9-9ad9-4ef2d4a06e9c",
+                                            "transaction_type": "push|pull",
+                                            "amount": 100,
+                                            "msisdn": "250785253349",
+                                            "channel_id": "airtel-money",
+                                            "transaction_reference": "8a004ce7-fd39-41b9-9ad9-4ef2d4a06e9c",
+                                            "gateway_reference": "8a004ce7-fd39-41b9-9ad9-4ef2d4a06e9c",
+                                            "gateway_status": "pending|succeed|failed",
+                                            "gateway_status_code": "200"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Transaction details": {
+                                        "value": {
+                                            "created_at": "string",
+                                            "company_id": "90f84fb1-961c-4cd7-a235-56ef522e3542",
+                                            "transaction_type": "push",
+                                            "amount": 100,
+                                            "msisdn": "0785253349",
+                                            "channel_id": "mtn-momo",
+                                            "transaction_reference": "90f84fb1-961c-4cd7-a235-56ef522e3542",
+                                            "gateway_reference": "90f84fb1-961c-4cd7-a235-56ef522e3541",
+                                            "gateway_status": "success",
+                                            "gateway_status_code": "200"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "description": "",
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "minLength": 1
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "minLength": 1
+                                        }
+                                    },
+                                    "required": [
+                                        "status",
+                                        "message"
+                                    ],
+                                    "x-examples": {
+                                        "example-1": {
+                                            "status": "failed",
+                                            "message": "Provide a valid auth token"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Transaction Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "description": "",
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "minLength": 1
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "minLength": 1
+                                        }
+                                    },
+                                    "required": [
+                                        "status",
+                                        "message"
+                                    ],
+                                    "x-examples": {
+                                        "example-1": {
+                                            "status": "failed",
+                                            "message": "transaction not found"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Transaction not found": {
+                                        "value": {
+                                            "status": "failed",
+                                            "message": "Transaction not found"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "description": "",
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "minLength": 1
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "minLength": 1
+                                        }
+                                    },
+                                    "required": [
+                                        "status",
+                                        "message"
+                                    ],
+                                    "x-examples": {
+                                        "example-1": {
+                                            "status": "failed",
+                                            "message": "internal server error"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Server error": {
+                                        "value": {
+                                            "status": "failed",
+                                            "message": "internal server error"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "": {
+                        "description": "Transaction found successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "description": "",
+                                    "type": "object",
+                                    "properties": {
+                                        "created_at": {
+                                            "type": "string",
+                                            "minLength": 1
+                                        },
+                                        "company_id": {
+                                            "type": "string",
+                                            "minLength": 1
+                                        },
+                                        "transaction_type": {
+                                            "type": "string",
+                                            "minLength": 1
+                                        },
+                                        "amount": {
+                                            "type": "number"
+                                        },
+                                        "msisdn": {
+                                            "type": "string",
+                                            "minLength": 1
+                                        },
+                                        "channel_id": {
+                                            "type": "string",
+                                            "minLength": 1
+                                        },
+                                        "transaction_reference": {
+                                            "type": "string",
+                                            "minLength": 1
+                                        },
+                                        "gateway_reference": {
+                                            "type": "string",
+                                            "minLength": 1
+                                        },
+                                        "gateway_status": {
+                                            "type": "string",
+                                            "minLength": 1
+                                        },
+                                        "gateway_status_code": {
+                                            "type": "string",
+                                            "minLength": 1
+                                        }
+                                    },
+                                    "required": [
+                                        "created_at",
+                                        "company_id",
+                                        "transaction_type",
+                                        "amount",
+                                        "msisdn",
+                                        "channel_id",
+                                        "transaction_reference",
+                                        "gateway_reference",
+                                        "gateway_status",
+                                        "gateway_status_code"
+                                    ],
+                                    "x-examples": {
+                                        "example-1": {
+                                            "created_at": "2021-04-21 14:24:51",
+                                            "company_id": "8a004ce7-fd39-41b9-9ad9-4ef2d4a06e9c",
+                                            "transaction_type": "push|pull",
+                                            "amount": 100,
+                                            "msisdn": "250785253349",
+                                            "channel_id": "airtel-money",
+                                            "transaction_reference": "8a004ce7-fd39-41b9-9ad9-4ef2d4a06e9c",
+                                            "gateway_reference": "8a004ce7-fd39-41b9-9ad9-4ef2d4a06e9c",
+                                            "gateway_status": "pending|succeed|failed",
+                                            "gateway_status_code": "200"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Check transaction status",
+                "description": "Retrieve the information of the transaction with the matching reference ID."
+            }
+        },
+        "/api/v1/payment/push": {
+            "post": {
+                "summary": "Payment push",
+                "operationId": "post-transaction",
+                "responses": {
+                    "200": {
+                        "description": "Payment transaction initialized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "description": "",
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "minLength": 1
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "transaction_reference": {
+                                                    "type": "string",
+                                                    "minLength": 1
+                                                },
+                                                "gateway_reference": {
+                                                    "type": "string",
+                                                    "minLength": 1
+                                                }
+                                            },
+                                            "required": [
+                                                "transaction_reference",
+                                                "gateway_reference"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "status",
+                                        "data"
+                                    ],
+                                    "x-examples": {
+                                        "example-1": {
+                                            "status": "success",
+                                            "data": {
+                                                "transaction_reference": "8a004ce7-fd39-41b9-9ad9-4ef2d4a06e9c",
+                                                "gateway_reference": "1cd97929-c8b9-45d5-aa26-0c4717a2c536"
+                                            }
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Transaction initialized": {
+                                        "value": {
+                                            "status": "succees",
+                                            "data": {
+                                                "transaction_reference": "90f84fb1-961c-4cd7-a235-56ef522e3542",
+                                                "gateway_reference": "90f84fb1-961c-4cd7-a235-56ef52241171"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Request body not valid",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "description": "",
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "minLength": 1
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "minLength": 1
+                                        }
+                                    },
+                                    "required": [
+                                        "status",
+                                        "message"
+                                    ],
+                                    "x-examples": {
+                                        "example-1": {
+                                            "status": "failed",
+                                            "message": "Transaction reference already used"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "409": {
+                        "description": "Email Already Taken"
+                    }
+                },
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "description": "",
+                                "type": "object",
+                                "properties": {
+                                    "company_id": {
+                                        "type": "string",
+                                        "minLength": 1
+                                    },
+                                    "transaction_type": {
+                                        "type": "string",
+                                        "minLength": 1
+                                    },
+                                    "amount": {
+                                        "type": "number"
+                                    },
+                                    "msisdn": {
+                                        "type": "string",
+                                        "minLength": 1
+                                    },
+                                    "channel_id": {
+                                        "type": "string",
+                                        "minLength": 1
+                                    },
+                                    "transaction_reference": {
+                                        "type": "string",
+                                        "minLength": 1
+                                    }
+                                },
+                                "required": [
+                                    "company_id",
+                                    "transaction_type",
+                                    "amount",
+                                    "msisdn",
+                                    "channel_id",
+                                    "transaction_reference"
+                                ],
+                                "x-examples": {
+                                    "example-1": {
+                                        "company_id": "8a004ce7-fd39-41b9-9ad9-4ef2d4a06e9c",
+                                        "transaction_type": "push|pull",
+                                        "amount": 100,
+                                        "msisdn": "250785253349",
+                                        "channel_id": "airtel-money",
+                                        "transaction_reference": "8a004ce7-fd39-41b9-9ad9-4ef2d4a06e9c"
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "Payment request": {
+                                    "value": {
+                                        "company_id": "90f84fb1-961c-4cd7-a235-56ef522e354d",
+                                        "transaction_type": "push",
+                                        "amount": 100,
+                                        "msisdn": "0785253340",
+                                        "channel_id": "mtn-momo",
+                                        "transaction_reference": "90f84fb1-961c-4cd7-a235-56ef522e3542"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "description": "Post the necessary fields for the API to perfom a payment push request."
+                },
+                "description": "Push a payment request."
+            },
+            "parameters": []
+        }
+    },
+    "components": {
+        "schemas": {
+            "Transaction": {
+                "description": "",
+                "type": "object",
+                "properties": {
+                    "created_at": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "company_id": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "transaction_type": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "amount": {
+                        "type": "number"
+                    },
+                    "msisdn": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "channel_id": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "transaction_reference": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "gateway_reference": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "gateway_status": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "gateway_status_code": {
+                        "type": "string",
+                        "minLength": 1
+                    }
+                },
+                "required": [
+                    "created_at",
+                    "company_id",
+                    "transaction_type",
+                    "amount",
+                    "msisdn",
+                    "channel_id",
+                    "transaction_reference",
+                    "gateway_reference",
+                    "gateway_status",
+                    "gateway_status_code"
+                ],
+                "x-examples": {
+                    "example-1": {
+                        "created_at": "2021-04-21 14:24:51",
+                        "company_id": "8a004ce7-fd39-41b9-9ad9-4ef2d4a06e9c",
+                        "transaction_type": "push|pull",
+                        "amount": 100,
+                        "msisdn": "250785253349",
+                        "channel_id": "airtel-money",
+                        "transaction_reference": "8a004ce7-fd39-41b9-9ad9-4ef2d4a06e9c",
+                        "gateway_reference": "8a004ce7-fd39-41b9-9ad9-4ef2d4a06e9c",
+                        "gateway_status": "pending|succeed|failed",
+                        "gateway_status_code": "200"
+                    }
+                },
+                "title": "Transaction"
+            }
+        }
+    }
+}
