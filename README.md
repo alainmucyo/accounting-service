@@ -51,12 +51,13 @@ Accounting service is a microservice that is in charge of all financial informat
 
 ### To check if the API is up and running.
 
-Just call this endpoint: `http://localhost:3000/ping` using a GET method It will show a `pong` response
-
-## Testing
+Just call this endpoint: `http://localhost:3000/ping` using a GET method It will show a `pong` response.
 
 Find the API docs `/api-docs` to get all API available
 
+## Testing
+
+Run `go test`
 
 ## Built With
 
