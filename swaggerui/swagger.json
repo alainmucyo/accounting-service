@@ -5,7 +5,7 @@
         "version": "1.0",
         "description": "Accounting service is a microservice that is in charge of all financial information – company account balances, transactions, statements, Money push (debit) and pull (credit) is handed over to the payment integrators.",
         "contact": {
-            "name": "Alain MUCYO",
+            "name": "Alain MUCYO M.",
             "email": "alainmucyo3@gmail.com",
             "url": "https://alainmucyo.netlify.app/"
         }
