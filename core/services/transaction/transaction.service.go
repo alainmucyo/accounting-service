@@ -17,11 +17,11 @@ func New(cache *redis.Cache, db *postgres.Database) *Service {
 }
 
 func (s *Service) FindAll() ([]transaction.Transaction, error) {
-	apps := make([]transaction.Transaction, 0)
-	if s.db.DB.Find(&apps).Error != nil {
-		return nil, errors.New("error while getting all apps")
+	transactions := make([]transaction.Transaction, 0)
+	if s.db.DB.Find(&transactions).Error != nil {
+		return nil, errors.New("error while getting all transactions")
 	}
-	return apps, nil
+	return transactions, nil
 }
 
 func (s *Service) Create(transaction transaction.Transaction) (transaction.Transaction, error) {

@@ -7,6 +7,7 @@ import (
 
 type Transaction struct {
 	entities.Base
+	ID                   string          `sql:"type:uuid;primary_key;default:uuid_generate_v4()"`
 	CompanyID            string          `gorm:"type:varchar(50)" json:"company_id"`
 	Amount               int64           `json:"amount"`
 	Msisdn               string          `gorm:"type:varchar(20)" json:"msisdn"`

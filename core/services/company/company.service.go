@@ -7,7 +7,7 @@ import (
 )
 
 type Service struct {
-	db    *postgres.Database
+	db *postgres.Database
 }
 
 func New(db *postgres.Database) *Service {
@@ -15,11 +15,52 @@ func New(db *postgres.Database) *Service {
 }
 
 func (s *Service) FindAll() ([]company.Company, error) {
-	apps := make([]company.Company, 0)
-	if s.db.DB.Find(&apps).Error != nil {
-		return nil, errors.New("error while getting all apps")
+	transactions := make([]company.Company, 0)
+	if s.db.DB.Find(&transactions).Error != nil {
+		return nil, errors.New("error while getting all companies")
 	}
-	return apps, nil
+	return transactions, nil
+}
+
+func (s *Service) FindByCompanyID(companyID string) (company.Company, error) {
+	var foundCompany company.Company
+	if s.db.DB.Where(&company.Company{CompanyID: companyID}).First(&foundCompany).Error != nil {
+		return company.Company{}, errors.New("company not found")
+	}
+	return foundCompany, nil
+}
+
+// FindByPK Finds a company by primary key
+func (s *Service) FindByPK(companyID string) (company.Company, error) {
+	var foundCompany company.Company
+	if s.db.DB.Where(&company.Company{ID: companyID}).First(&foundCompany).Error != nil {
+		return company.Company{}, errors.New("company not found")
+	}
+	return foundCompany, nil
+}
+
+func (s *Service) UpdateActualBalance(companyID string, balance int64) error {
+	foundCompany, err := s.FindByPK(companyID)
+	if err != nil {
+		return err
+	}
+	foundCompany.ActualBalance = balance
+	if s.db.DB.Model(&foundCompany).Where("id = ?", companyID).Updates(foundCompany).Error != nil {
+		return errors.New("company not found")
+	}
+	return nil
+}
+
+func (s *Service) UpdateAvailableBalance(companyID string, balance int64) error {
+	foundCompany, err := s.FindByPK(companyID)
+	if err != nil {
+		return err
+	}
+	foundCompany.AvailableBalance = balance
+	if s.db.DB.Model(&foundCompany).Where("id = ?", companyID).Updates(foundCompany).Error != nil {
+		return errors.New("company not found")
+	}
+	return nil
 }
 
 func (s *Service) Create(company company.Company) (company.Company, error) {

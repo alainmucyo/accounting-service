@@ -15,11 +15,11 @@ func New(db *postgres.Database) *Service {
 }
 
 func (s *Service) FindAll() ([]channel.Channel, error) {
-	apps := make([]channel.Channel, 0)
-	if s.db.DB.Find(&apps).Error != nil {
-		return nil, errors.New("error while getting all apps")
+	channels := make([]channel.Channel, 0)
+	if s.db.DB.Find(&channels).Error != nil {
+		return nil, errors.New("error while getting all channels")
 	}
-	return apps, nil
+	return channels, nil
 }
 
 func (s *Service) FindByName(channelName string) (channel.Channel, error) {
