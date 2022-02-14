@@ -24,6 +24,14 @@ func (s *Service) FindAll() ([]transaction.Transaction, error) {
 	return transactions, nil
 }
 
+func (s *Service) FindByReferenceID(referenceID string) (transaction.Transaction, error) {
+	var foundTransaction transaction.Transaction
+	if s.db.DB.Where(&transaction.Transaction{TransactionReference: referenceID}).First(&foundTransaction).Error != nil {
+		return transaction.Transaction{}, errors.New("transaction not found")
+	}
+	return foundTransaction, nil
+}
+
 func (s *Service) Create(transaction transaction.Transaction) (transaction.Transaction, error) {
 	ctx := s.db.DB.Begin()
 	if ctx.Error != nil {

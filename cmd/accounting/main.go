@@ -6,6 +6,7 @@ import (
 	"accounting-service/core/services/channel"
 	"accounting-service/core/services/company"
 	"accounting-service/core/services/transaction"
+	"accounting-service/core/uuid"
 	"accounting-service/store/postgres"
 	"accounting-service/store/redis"
 	"context"
@@ -37,7 +38,9 @@ func main() {
 	channelService := channel.New(db)
 	transactionService := transaction.New(cache, db)
 	companyService := company.New(db)
-	transactionController := transactionHandler.New(envs, transactionService, channelService, companyService)
+
+	uuidGenerator := uuid.New()
+	transactionController := transactionHandler.New(envs, transactionService, channelService, companyService, uuidGenerator)
 	r := gin.Default()
 
 	r.GET("/ping", func(c *gin.Context) {
