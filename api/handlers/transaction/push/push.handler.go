@@ -39,6 +39,11 @@ func New(
 	}
 }
 
+type response struct {
+	TransactionReference string `json:"transactionReference,omitempty"`
+	GatewayReference     string `json:"gatewayReference,omitempty"`
+}
+
 func (h *Handler) HandleTransactionPushRequest(c *gin.Context) {
 	var reqJSON dtos.TransactionDTO
 	if err := c.BindJSON(&reqJSON); err != nil {
@@ -137,8 +142,11 @@ func (h *Handler) HandleTransactionPushRequest(c *gin.Context) {
 	   // TODO: Update the transaction. */
 
 	c.JSON(200, gin.H{
-		"message":     "Request received successfully",
-		"transaction": createdTransaction,
+		"message": "Request received successfully",
+		"data": response{
+			TransactionReference: createdTransaction.TransactionReference,
+			GatewayReference:     createdTransaction.GatewayReference,
+		},
 	})
 	return
 }

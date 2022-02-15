@@ -20,6 +20,10 @@ type Handler struct {
 	uuidGenerator      *uuid.Generator
 	kafkaProducer      *producer.Producer
 }
+type response struct {
+	TransactionReference string `json:"transactionReference,omitempty"`
+	GatewayReference     string `json:"gatewayReference,omitempty"`
+}
 
 func New(
 	env *environment.Environment,
@@ -98,8 +102,11 @@ func (h *Handler) HandleTransactionPullRequest(c *gin.Context) {
 	}
 	// FYI: Rest will be handled by the worker
 	c.JSON(200, gin.H{
-		"message":     "Request received successfully",
-		"transaction": createdTransaction,
+		"message": "Request received successfully",
+		"data": response{
+			TransactionReference: createdTransaction.TransactionReference,
+			GatewayReference:     createdTransaction.GatewayReference,
+		},
 	})
 	return
 }

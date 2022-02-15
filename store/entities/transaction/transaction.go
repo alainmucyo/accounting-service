@@ -12,7 +12,7 @@ type Transaction struct {
 	Msisdn               string          `gorm:"type:varchar(20)" json:"msisdn"`
 	ChannelId            string          `json:"channel_id"`
 	Channel              channel.Channel `gorm:"foreignKey:ChannelId;references:ID" json:"channel"`
-	Type                 string          `gorm:"type:varchar(50),default:push" json:"transaction_type"`
+	Type                 string          `gorm:"type:varchar(50)" json:"transaction_type"`
 	TransactionReference string          `gorm:"type:varchar(50)" json:"transaction_reference"`
 	GatewayReference     string          `gorm:"type:varchar(50)" json:"gateway_reference"`
 	GatewayStatus        string          `gorm:"type:varchar(50)" json:"gateway_status"`
