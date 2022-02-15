@@ -13,6 +13,8 @@ services:
   postgres:
     image: postgres
     container_name: accounting-postgres
+    ports:
+      - "5431:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
@@ -26,7 +28,7 @@ services:
     hostname: zoo
     container_name: zoo
     ports:
-      - "2181:2181"
+      - "2180:2181"
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_SERVER_ID: 1
@@ -37,13 +39,13 @@ services:
     hostname: kafka
     container_name: kafka
     ports:
-      - "9092:9092"
+      - "9091:9092"
       - "9999:9999"
     environment:
       KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://kafka:19092,LISTENER_DOCKER_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER_INTERNAL:PLAINTEXT,LISTENER_DOCKER_EXTERNAL:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER_INTERNAL
-      KAFKA_ZOOKEEPER_CONNECT: "zoo:2181"
+      KAFKA_ZOOKEEPER_CONNECT: "zoo:2180"
       KAFKA_BROKER_ID: 1
       KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
