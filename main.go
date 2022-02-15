@@ -1,6 +1,7 @@
 package main
 
 import (
+	"accounting-service/api/handlers/transaction/pull"
 	"accounting-service/api/handlers/transaction/push"
 	"accounting-service/core/environment"
 	"accounting-service/core/services/channel"
@@ -20,12 +21,16 @@ import (
 	"os"
 )
 
+// TODO: This main.go file will be moved to cmd/accounting
 func main() {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
+	// Getting app context
 	ctx := context.Background()
+
+	// Initializes available env
 	envs := environment.New(
 		os.Getenv("PORT"),
 		os.Getenv("REDIS_URL"),
@@ -40,22 +45,44 @@ func main() {
 	db := postgres.New(envs)
 	kafkaProducer := producer.New(envs)
 
+	// Migrates databases if they are not available
 	db.Migrate()
 
+	// Initialize services
 	channelService := channel.New(db)
+
+	// This creates one channel names mtn-momo
 	channelService.Seed()
+
 	transactionService := transaction.New(cache, db)
 	companyService := company.New(db)
 
+	// Kafka company event handler. This handles all Kafka requests related to companies
 	companyEventHandler := companyEvents.New(companyService, kafkaProducer)
 	kafkaTopics := topics.New(envs, companyEventHandler)
 	kafkaConsumer := consumer.New(envs, kafkaTopics)
 
+	/**
+	Consumer blocks, it's like an endless loop that is waiting for messages.
+	It is being initialized in Go routine for not to block everything else
+	*/
 	go kafkaConsumer.Consume()
+
+	// Initialise a UUID generator.
 	uuidGenerator := uuid.New()
 
 	// Transaction push controller
-	transactionController := push.New(
+	pushController := push.New(
+		envs,
+		transactionService,
+		channelService,
+		companyService,
+		uuidGenerator,
+		kafkaProducer,
+	)
+
+	// Transaction pull controller
+	pullController := pull.New(
 		envs,
 		transactionService,
 		channelService,
@@ -72,7 +99,9 @@ func main() {
 		})
 	})
 
-	r.POST("/api/v1/payment/push", transactionController.HandleTransactionPushRequest)
+	r.POST("/api/v1/payment/push", pushController.HandleTransactionPushRequest)
+	r.POST("/api/v1/payment/pull", pullController.HandleTransactionPullRequest)
+
 	r.Static("/api-docs", "./swaggerui")
-	r.Run(":3000")
+	r.Run(":" + envs.Port)
 }
