@@ -87,7 +87,23 @@ func (h *Handler) HandleTransactionPushRequest(c *gin.Context) {
 		reqJSON.CompanyId,
 		foundCompany.AvailableBalance-reqJSON.Amount,
 	)
-
+	transactionRequest := transactionEntity.Transaction{
+		TransactionReference: reqJSON.TransactionReference,
+		Amount:               reqJSON.Amount,
+		Channel:              foundChannel,
+		CompanyID:            reqJSON.CompanyId,
+		GatewayReference:     h.uuidGenerator.GenerateUUID(), // Generates a UUID
+		Msisdn:               reqJSON.Msisdn,
+		Type:                 "push",
+		GatewayStatus:        "pending",
+	}
+	createdTransaction, err := h.transactionService.Create(transactionRequest)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"message": "Something went wrong while creating a transaction",
+		})
+		return
+	}
 	switch foundChannel.Name {
 	case "mtn-momo":
 		// TODO: Sends a request to MTN MOMO
@@ -99,30 +115,27 @@ func (h *Handler) HandleTransactionPushRequest(c *gin.Context) {
 		// TODO: Sends to Airtel money
 	}
 
-	// Transaction succeed
-	transactionRequest := transactionEntity.Transaction{
-		TransactionReference: reqJSON.TransactionReference,
-		Amount:               reqJSON.Amount,
-		Channel:              foundChannel,
-		CompanyID:            reqJSON.CompanyId,
-		GatewayReference:     h.uuidGenerator.GenerateUUID(), // Generates a UUID
-		Msisdn:               reqJSON.Msisdn,
-		Type:                 "push",
-		GatewayStatus:        "success",
-	}
+	// TODO: This will be moved to a worker and in case a transaction failed, it will be handled there
+	/*	// Transaction succeed
+		transactionRequest = transactionEntity.Transaction{
+			TransactionReference: reqJSON.TransactionReference,
+			Amount:               reqJSON.Amount,
+			Channel:              foundChannel,
+			CompanyID:            reqJSON.CompanyId,
+			GatewayReference:     h.uuidGenerator.GenerateUUID(), // Generates a UUID
+			Msisdn:               reqJSON.Msisdn,
+			Type:                 "push",
+			GatewayStatus:        "success",
+		}
 
-	// Updates actual balance because transaction succeed
-	h.companyService.UpdateActualBalance(
-		reqJSON.CompanyId,
-		foundCompany.AvailableBalance-reqJSON.Amount,
-	)
-	createdTransaction, err := h.transactionService.Create(transactionRequest)
-	if err != nil {
-		c.JSON(400, gin.H{
-			"message": "Something went wrong while creating a transaction",
-		})
-		return
-	}
+		// TODO: This also will be moved to a worker. Here it is deducting but it will also refund.
+		// Updates actual balance because transaction succeed
+		h.companyService.UpdateActualBalance(
+			reqJSON.CompanyId,
+			foundCompany.AvailableBalance-reqJSON.Amount,
+		)
+	   // TODO: Update the transaction. */
+
 	c.JSON(200, gin.H{
 		"message":     "Request received successfully",
 		"transaction": createdTransaction,
