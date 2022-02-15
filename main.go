@@ -1,12 +1,16 @@
 package main
 
 import (
-	transactionHandler "accounting-service/api/handlers/transaction"
+	"accounting-service/api/handlers/transaction/push"
 	"accounting-service/core/environment"
 	"accounting-service/core/services/channel"
 	"accounting-service/core/services/company"
 	"accounting-service/core/services/transaction"
 	"accounting-service/core/uuid"
+	companyEvents "accounting-service/events/handlers/company"
+	"accounting-service/store/kafka/consumer"
+	"accounting-service/store/kafka/producer"
+	"accounting-service/store/kafka/topics"
 	"accounting-service/store/postgres"
 	"accounting-service/store/redis"
 	"context"
@@ -27,20 +31,39 @@ func main() {
 		os.Getenv("REDIS_URL"),
 		os.Getenv("REDIS_PASSWORD"),
 		os.Getenv("DB_URL"),
+		os.Getenv("KAFKA_BROKER_URL"),
+		os.Getenv("KAFKA_GROUP_ID"),
 	)
 
 	// FYI: Will look for better way to handle dependency injection in Go
 	cache := redis.New(envs, ctx)
 	db := postgres.New(envs)
+	kafkaProducer := producer.New(envs)
 
 	db.Migrate()
 
 	channelService := channel.New(db)
+	channelService.Seed()
 	transactionService := transaction.New(cache, db)
 	companyService := company.New(db)
 
+	companyEventHandler := companyEvents.New(companyService, kafkaProducer)
+	kafkaTopics := topics.New(envs, companyEventHandler)
+	kafkaConsumer := consumer.New(envs, kafkaTopics)
+
+	go kafkaConsumer.Consume()
 	uuidGenerator := uuid.New()
-	transactionController := transactionHandler.New(envs, transactionService, channelService, companyService, uuidGenerator)
+
+	// Transaction push controller
+	transactionController := push.New(
+		envs,
+		transactionService,
+		channelService,
+		companyService,
+		uuidGenerator,
+		kafkaProducer,
+	)
+
 	r := gin.Default()
 
 	r.GET("/ping", func(c *gin.Context) {
@@ -48,7 +71,8 @@ func main() {
 			"message": "pong",
 		})
 	})
-	r.POST("/transaction/request", transactionController.HandleTransactionRequest)
+
+	r.POST("/api/v1/payment/push", transactionController.HandleTransactionPushRequest)
 	r.Static("/api-docs", "./swaggerui")
 	r.Run(":3000")
 }

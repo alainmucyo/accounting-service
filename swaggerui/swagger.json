@@ -240,7 +240,7 @@
                 "description": "Retrieve the information of the transaction with the matching reference ID."
             }
         },
-        "/api/v1/payment/initialize": {
+        "/api/v1/payment/push": {
             "post": {
                 "summary": "Initialize Payment push or pull",
                 "operationId": "post-transaction",
@@ -392,7 +392,6 @@
                                 "Payment request": {
                                     "value": {
                                         "company_id": "90f84fb1-961c-4cd7-a235-56ef522e354d",
-                                        "transaction_type": "push",
                                         "amount": 100,
                                         "msisdn": "0785253340",
                                         "channel_id": "mtn-momo",
@@ -432,11 +431,6 @@
                         "minLength": 1,
                         "description": "Company where the request is sent from"
                     },
-                    "transaction_type": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "Transaction type, it can be either push or pull"
-                    },
                     "amount": {
                         "type": "number",
                         "description": "Amount to transact"
@@ -459,7 +453,6 @@
                 },
                 "required": [
                     "company_id",
-                    "transaction_type",
                     "amount",
                     "msisdn",
                     "channel",

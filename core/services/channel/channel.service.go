@@ -45,3 +45,21 @@ func (s *Service) Create(channel channel.Channel) (channel.Channel, error) {
 	}
 	return channel, nil
 }
+
+func (s *Service) Seed() {
+	var channels []channel.Channel
+	_ = s.db.DB.Find(&channels).Error
+	if len(channels) > 0 {
+		return
+	}
+	//println("Seeding USSD app")
+	channelObj := channel.Channel{
+		Name: "mtn-momo",
+	}
+	_, err := s.Create(channelObj)
+	if err != nil {
+		//println("Failed to seed app")
+		return
+	}
+	//println("App seeded successfully")
+}
