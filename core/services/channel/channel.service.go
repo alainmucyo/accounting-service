@@ -52,14 +52,11 @@ func (s *Service) Seed() {
 	if len(channels) > 0 {
 		return
 	}
-	//println("Seeding USSD app")
 	channelObj := channel.Channel{
 		Name: "mtn-momo",
 	}
 	_, err := s.Create(channelObj)
 	if err != nil {
-		//println("Failed to seed app")
 		return
 	}
-	//println("App seeded successfully")
 }

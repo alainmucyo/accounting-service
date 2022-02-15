@@ -14,6 +14,7 @@ type TransactionDTO struct {
 }
 
 func (t TransactionDTO) Validate() error {
+	// Validates phone number
 	r, _ := regexp.Compile("(^(07[8,9])[0-9]{7}$)")
 	if !r.MatchString(t.Msisdn) {
 		return errors.New("invalid phone msisdn")
