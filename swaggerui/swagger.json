@@ -1,0 +1,464 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "accounting",
+        "version": "1.0",
+        "description": "Accounting service is a microservice that is in charge of all financial information – company account balances, transactions, statements, Money push (debit) and pull (credit) is handed over to the payment integrators.",
+        "contact": {
+            "name": "Alain MUCYO M.",
+            "email": "alainmucyo3@gmail.com",
+            "url": "https://alainmucyo.netlify.app/"
+        }
+    },
+    "servers": [
+        {
+            "url": "http://localhost:3000",
+            "description": "localhost"
+        }
+    ],
+    "paths": {
+        "/api/v1/transactions/{refId}": {
+            "parameters": [
+                {
+                    "schema": {
+                        "type": "string"
+                    },
+                    "name": "refId",
+                    "in": "path",
+                    "description": "Transaction reference ID that was sent while initializing transaction ",
+                    "required": true
+                }
+            ],
+            "get": {
+                "summary": "Check transaction status",
+                "tags": [],
+                "responses": {
+                    "200": {
+                        "description": "Transaction found successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "description": "",
+                                    "type": "object",
+                                    "x-examples": {
+                                        "example-1": {
+                                            "status": "success",
+                                            "data": {
+                                                "created_at": "string",
+                                                "company_id": "90f84fb1-961c-4cd7-a235-56ef522e3542",
+                                                "transaction_type": "push",
+                                                "amount": 100,
+                                                "msisdn": "0785253349",
+                                                "channel_id": "mtn-momo",
+                                                "transaction_reference": "90f84fb1-961c-4cd7-a235-56ef522e3542",
+                                                "gateway_reference": "90f84fb1-961c-4cd7-a235-56ef522e3541",
+                                                "gateway_status": "success",
+                                                "gateway_status_code": 200
+                                            }
+                                        }
+                                    },
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "minLength": 1,
+                                            "description": "Request succeed or not"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "required": [
+                                                "created_at",
+                                                "company_id",
+                                                "transaction_type",
+                                                "amount",
+                                                "msisdn",
+                                                "channel_id",
+                                                "transaction_reference",
+                                                "gateway_reference",
+                                                "gateway_status",
+                                                "gateway_status_code"
+                                            ],
+                                            "description": "Details body",
+                                            "properties": {
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "minLength": 1,
+                                                    "description": "A date a transaction request was submitted at"
+                                                },
+                                                "company_id": {
+                                                    "type": "string",
+                                                    "minLength": 1,
+                                                    "description": "Company where the request was initialized from"
+                                                },
+                                                "transaction_type": {
+                                                    "type": "string",
+                                                    "minLength": 1,
+                                                    "description": "Transaction type. It can be either push or pull"
+                                                },
+                                                "amount": {
+                                                    "type": "number",
+                                                    "description": "Amount transacted"
+                                                },
+                                                "msisdn": {
+                                                    "type": "string",
+                                                    "minLength": 1,
+                                                    "description": "Client's phone number where money will be credited or debited from"
+                                                },
+                                                "channel_id": {
+                                                    "type": "string",
+                                                    "minLength": 1,
+                                                    "description": "Channel used, it can be either MTN Momo, Airtel money or BK"
+                                                },
+                                                "transaction_reference": {
+                                                    "type": "string",
+                                                    "minLength": 1,
+                                                    "description": "External reference ID"
+                                                },
+                                                "gateway_reference": {
+                                                    "type": "string",
+                                                    "minLength": 1,
+                                                    "description": "Reference ID generated by accounting service"
+                                                },
+                                                "gateway_status": {
+                                                    "type": "string",
+                                                    "minLength": 1,
+                                                    "description": "Transaction status, either succeed, failed or pending"
+                                                },
+                                                "gateway_status_code": {
+                                                    "type": "number",
+                                                    "description": "Status code of transaction generated by telco"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "status",
+                                        "data"
+                                    ]
+                                },
+                                "examples": {
+                                    "Transaction details": {
+                                        "value": {
+                                            "status": "success",
+                                            "data": {
+                                                "created_at": "string",
+                                                "company_id": "90f84fb1-961c-4cd7-a235-56ef522e3542",
+                                                "transaction_type": "push",
+                                                "amount": 100,
+                                                "msisdn": "0785253349",
+                                                "channel_id": "mtn-momo",
+                                                "transaction_reference": "90f84fb1-961c-4cd7-a235-56ef522e3542",
+                                                "gateway_reference": "90f84fb1-961c-4cd7-a235-56ef522e3541",
+                                                "gateway_status": "success",
+                                                "gateway_status_code": "200"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Transaction Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "description": "",
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "minLength": 1
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "minLength": 1
+                                        }
+                                    },
+                                    "required": [
+                                        "status",
+                                        "message"
+                                    ],
+                                    "x-examples": {
+                                        "example-1": {
+                                            "status": "failed",
+                                            "message": "transaction not found"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Transaction not found": {
+                                        "value": {
+                                            "status": "failed",
+                                            "message": "Transaction not found"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "description": "",
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "minLength": 1
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "minLength": 1
+                                        }
+                                    },
+                                    "required": [
+                                        "status",
+                                        "message"
+                                    ],
+                                    "x-examples": {
+                                        "example-1": {
+                                            "status": "failed",
+                                            "message": "internal server error"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Server error": {
+                                        "value": {
+                                            "status": "failed",
+                                            "message": "internal server error"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Check transaction status",
+                "description": "Retrieve the information of the transaction with the matching reference ID."
+            }
+        },
+        "/api/v1/payment/push": {
+            "post": {
+                "summary": "Initialize Payment push or pull",
+                "operationId": "post-transaction",
+                "responses": {
+                    "200": {
+                        "description": "The API request is ok and received successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "description": "",
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "minLength": 1
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "transaction_reference": {
+                                                    "type": "string",
+                                                    "minLength": 1
+                                                },
+                                                "gateway_reference": {
+                                                    "type": "string",
+                                                    "minLength": 1
+                                                }
+                                            },
+                                            "required": [
+                                                "transaction_reference",
+                                                "gateway_reference"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "status",
+                                        "data"
+                                    ],
+                                    "x-examples": {
+                                        "example-1": {
+                                            "status": "success",
+                                            "data": {
+                                                "transaction_reference": "8a004ce7-fd39-41b9-9ad9-4ef2d4a06e9c",
+                                                "gateway_reference": "1cd97929-c8b9-45d5-aa26-0c4717a2c536"
+                                            }
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Transaction initialized": {
+                                        "value": {
+                                            "status": "succees",
+                                            "data": {
+                                                "transaction_reference": "90f84fb1-961c-4cd7-a235-56ef522e3542",
+                                                "gateway_reference": "90f84fb1-961c-4cd7-a235-56ef52241171"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Request body contains invalid fields",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "description": "",
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "minLength": 1
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "minLength": 1
+                                        }
+                                    },
+                                    "required": [
+                                        "status",
+                                        "message"
+                                    ],
+                                    "x-examples": {
+                                        "example-1": {
+                                            "status": "failed",
+                                            "message": "Transaction reference already used"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Bad request": {
+                                        "value": {
+                                            "status": "failed",
+                                            "message": "Reference ID already used"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "description": "",
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "minLength": 1
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "minLength": 1
+                                        }
+                                    },
+                                    "required": [
+                                        "status",
+                                        "message"
+                                    ],
+                                    "x-examples": {
+                                        "example-1": {
+                                            "status": "failed",
+                                            "message": "internal server error"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Server error": {
+                                        "value": {
+                                            "status": "failed",
+                                            "message": "internal server error"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Transaction"
+                            },
+                            "examples": {
+                                "Payment request": {
+                                    "value": {
+                                        "company_id": "90f84fb1-961c-4cd7-a235-56ef522e354d",
+                                        "amount": 100,
+                                        "msisdn": "0785253340",
+                                        "channel_id": "mtn-momo",
+                                        "transaction_reference": "90f84fb1-961c-4cd7-a235-56ef522e3542"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "description": "Post the necessary fields for the API to perfom a payment push request."
+                },
+                "description": "Call this endpoint to send a payment push or pull request. This API initialize a transaction"
+            },
+            "parameters": []
+        }
+    },
+    "components": {
+        "schemas": {
+            "Transaction": {
+                "description": "",
+                "type": "object",
+                "x-examples": {
+                    "example-1": {
+                        "company_id": "8a004ce7-fd39-41b9-9ad9-4ef2d4a06e9c",
+                        "transaction_type": "push|pull",
+                        "amount": 100,
+                        "msisdn": "250785253349",
+                        "channel_id": "airtel-money",
+                        "transaction_reference": "8a004ce7-fd39-41b9-9ad9-4ef2d4a06e9c"
+                    }
+                },
+                "title": "Transaction",
+
+                "properties": {
+                    "company_id": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "Company where the request is sent from"
+                    },
+                    "amount": {
+                        "type": "number",
+                        "description": "Amount to transact"
+                    },
+                    "msisdn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "User's phone number"
+                    },
+                    "channel": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "Channel that will process transaction. This can be Airtel, MTN or BK for now"
+                    },
+                    "transaction_reference": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "A unique transaction reference. UUID is recommended. It can be used to check transaction status"
+                    }
+                },
+                "required": [
+                    "company_id",
+                    "amount",
+                    "msisdn",
+                    "channel",
+                    "transaction_reference"
+                ]
+            }
+        }
+    }
+}
