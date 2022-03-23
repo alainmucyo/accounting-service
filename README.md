@@ -74,5 +74,5 @@ Run `go test`
 
 ## Licence
 
-This software is published by `FDI Engineering Team` under the [MIT licence](http://opensource.org/licenses/MIT).
+This software is published under the [MIT licence](http://opensource.org/licenses/MIT).
 
